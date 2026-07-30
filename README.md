@@ -1,5 +1,31 @@
 # OVERDRAW
 
+---
+A word from a human.
+
+I am a bit sick and tired of seeing people posting "I made this!" posts with
+just unreadable, non-working AI-generated slop, where they pretend they spent
+a lot of effort prompting their agent to obtain what they got.
+
+This repository has been generated with a single prompt, that went along the
+lines of "Make a PS1 game, anything you want, full authority, go."
+
+This is the result. I have only done 3 things:
+
+1. I ran this command:
+
+```
+git submodule add https://github.com/pcsx-redux/nugget.git third_party/nugget
+```
+
+2. I edited the Makefile to point at it instead.
+
+3. I included this disclaimer here.
+
+Now stop telling me that prompting is hard work.
+
+---
+
 A PlayStation 1 puzzle game where the ordering table is the board.
 
 The PS1 has no depth buffer. Three-dimensional scenes are sorted into an

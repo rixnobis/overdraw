@@ -22,7 +22,7 @@ endif
 # Point this at a nugget checkout, or at the src/mips directory of a
 # pcsx-redux tree. psyqo.mk works out its own location, so an absolute path
 # here is enough and this project does not need to live inside that tree.
-PSYQO_ROOT ?= /home/pixel/sources/pcsx-redux-wt/overdraw-sdk/src/mips
+PSYQO_ROOT ?= third_party/nugget
 
 include $(PSYQO_ROOT)/psyqo/psyqo.mk
 
