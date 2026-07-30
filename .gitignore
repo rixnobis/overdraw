@@ -1,0 +1,7 @@
+*.o
+*.dep
+*.elf
+*.map
+*.ps-exe
+solver
+solutions.inc
