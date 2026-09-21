@@ -1,0 +1,55 @@
+name: Verify
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    container: ghcr.io/grumpycoders/pcsx-redux-build:latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          set-safe-directory: true
+
+      - name: Tooling for the render gate
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq imagemagick xvfb curl unzip libgl1-mesa-dri
+
+      - name: pcsx-redux
+        # The dev channel's Linux build, extracted rather than mounted because
+        # the runner has no FUSE.
+        run: |
+          curl -sL -o pcsx-redux.zip https://distrib.app/pub/org/pcsx-redux/project/dev-linux-x64/latest
+          unzip -q pcsx-redux.zip
+          ./PCSX-Redux-*.AppImage --appimage-extract > /dev/null
+
+      - name: Four gates
+        # No BIOS is set on purpose: verify.sh falls back to the emulator's
+        # built-in OpenBIOS when the local openbios.bin is not there.
+        env:
+          # No GPU on a runner, so the render gate needs Mesa's software
+          # rasteriser to get a GL context at all.
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          # The render gates grab a frame over the emulator's web server, which never
+          # accepts a connection on a runner - curl gets ECONNREFUSED for the
+          # full 30s with the emulator alive. Board #610. The skip prints a
+          # banner; the earlier gates still run and still gate the job.
+          RENDER: "0"
+        run: REDUX="$GITHUB_WORKSPACE/squashfs-root/AppRun" ./verify.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: overdraw
+          path: |
+            overdraw.ps-exe
+            overdraw-autoplay.ps-exe
